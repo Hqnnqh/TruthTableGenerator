@@ -6,30 +6,31 @@ public class Parser {
 
 	/**
 	 * 
-	 * @author Hannah Fluch Faster version of the parser with character operators
+	 * @author Hqnnqh
+	 * 
 	 * 
 	 */
 
 	// TODO: check for right precedence
 	private int precedenceOrder(char operator) {
-		if (operator == '!')
-			return 6;
-		if (operator == '&')
+		if (operator == '!') // NEGATION
 			return 5;
-		if (operator == '|')
+		if (operator == '&') // CONJUNCTION
 			return 4;
-		if (operator == '>')
+		if (operator == '|') // DISJUNCTION
 			return 3;
-		if (operator == '=')
+		if (operator == '>') // MATERIAL IMPLICATION
 			return 2;
-		if (operator == '-')
+		if (operator == '=') // EQUIVALENCE
+			return 1;
+		if (operator == '-') // NON-EQUIVALENCE
 			return 1;
 		return 0;
 	}
 
 	/**
 	 * 
-	 * Performs the current logical operatoion on the stack
+	 * Performs the current logical operation on the stack
 	 * 
 	 * @param value1   - first value (swapped)
 	 * @param value2   - second value (swapped)
@@ -37,7 +38,6 @@ public class Parser {
 	 * @return the result of the operation
 	 */
 	private boolean performOperation(boolean value1, boolean value2, char operator) {
-//		System.out.println("v1: " + value1 + " v2: " + value2 + " op: " + operator);
 		// value1 the right part of the operation and value2 the left part
 		switch (operator) {
 		case '!':
@@ -72,13 +72,13 @@ public class Parser {
 		boolean expectValue = true; // checks for the appropriate syntax
 
 		Stack<Boolean> values = new Stack<>(); // all values (true:1/false:0)
-		Stack<Character> operators = new Stack<>(); // all operators (&&, ||, ==, ...)
+		Stack<Character> operators = new Stack<>(); // all operators (&, |, =, ...)
 
-		for (int i = 0; i < expression.length(); i++) {
+		for (int i = 0; i < expression.length(); i++) { // go through each character of the expression
 
-			char current = expression.charAt(i);
+			char current = expression.charAt(i); // current character
 
-			if (Character.toString(current).matches("[\\s\\u00A0]+")) // skip whitespaces
+			if (Character.toString(current).matches("[\\s\\u00A0]+")) // skip white spaces
 				continue;
 
 			else if (current == '(') {
@@ -128,18 +128,17 @@ public class Parser {
 					values.push(performOperation(value1, value2, operator));
 				}
 
-				// pop the '('
-				if (!operators.isEmpty())
-					operators.pop();
+//				if (!operators.isEmpty()) -> cannot be empty, because of the previous check
+				operators.pop();
 
 				expectValue = false;
 			} else {
-
+				
 				if (expectValue && current != '!')
 					throw new ParserException("ERROR when parsing! Value expected !");
 
 				if (i == expression.length() - 1)
-					throw new ParserException("ERROR when parsing! Value was expected!");
+					throw new ParserException("ERROR when parsing! Sudden end of expression - value was expected!");
 
 				// calculate the operations with higher precedence before adding another
 				// operator

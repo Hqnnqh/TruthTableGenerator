@@ -65,7 +65,7 @@ public class Simplifier {
 				value.append(currentChar);
 
 				if (j < implicant.length() - 1 && currentChar != '!') {
-					// Add "&&" only if the current character is not "!" and it's not the last
+					// Add "&" only if the current character is not "!" and it's not the last
 					// character in the implicant
 					value.append("&");
 				}

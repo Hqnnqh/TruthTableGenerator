@@ -6,6 +6,17 @@ import com.hqnnqh.turthtable.generator.TruthTableGenerator;
 import com.hqnnqh.turthtable.generator.simplifier.MinTermConverter;
 import com.hqnnqh.turthtable.generator.simplifier.Simplifier;
 
+/**
+ * 
+ * TODO: better description
+ * 
+ * Java Implementation of Logical Stack Calculations, Quine-McKluskey Algorithm
+ * and Petrick's Method
+ * 
+ * @author Hqnnqh
+ *
+ */
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -20,7 +31,7 @@ public class Main {
 //		(a->b)->((!a->b)->b)
 //		TruthTableGenerator generator = new TruthTableGenerator(formular);
 //		generator.generateTable();
-		String formular = "A & B | C > A | D & !D";
+		String formular = "(a>b=c-d) = ((a>b=c)-d)";
 		TruthTableGenerator generator = new TruthTableGenerator(formular);
 
 		generator.generateTable();
