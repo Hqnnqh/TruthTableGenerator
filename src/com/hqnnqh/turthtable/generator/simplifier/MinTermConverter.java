@@ -46,6 +46,7 @@ public class MinTermConverter {
 
 			if (parser.evaluate(currentExpression)) {
 				String currExpression = "";
+				
 				for (int j = 0; j < numberOfVariables; j++) {
 					currExpression = currExpression + ((statesOfRow[j] == true) ? '1' : '0');
 
