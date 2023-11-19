@@ -211,7 +211,6 @@ public class Simplifier {
 			if (!list1.get(i).equals(list2.get(i)))
 				return false;
 		}
-
 		return true;
 	}
 
@@ -262,7 +261,7 @@ public class Simplifier {
 //				.orElse(null); // covers maximum number of minterms
 //			
 			String bestImplicant = null; // the implicant that covers the max amount of prime implicants
-			int maxCoveredMinterms = 0;
+			int maxCoveredMinterms = 0; // TODO: check if setting it to 1 is better
 			for (String implicant : primeImplicants) {
 				int countCovered = countCoveredMinterms(implicant, minterms);
 				if (countCovered > maxCoveredMinterms) {
