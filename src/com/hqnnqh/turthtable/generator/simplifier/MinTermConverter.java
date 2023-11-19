@@ -7,8 +7,6 @@ import com.hqnnqh.turthtable.generator.parser.Parser;
 
 public class MinTermConverter {
 
-	// simpleTerm = term with only &&, ||, !
-
 	public static char[] getVariables(String formular) {
 		int[] variablesAsInts = formular.chars().filter(character -> Character.isLetter(((char) character))).distinct()
 				.toArray();
@@ -46,7 +44,7 @@ public class MinTermConverter {
 
 			if (parser.evaluate(currentExpression)) {
 				String currExpression = "";
-				
+
 				for (int j = 0; j < numberOfVariables; j++) {
 					currExpression = currExpression + ((statesOfRow[j] == true) ? '1' : '0');
 
@@ -55,26 +53,6 @@ public class MinTermConverter {
 			}
 		}
 		return minTerms;
-	}
-
-	public static List<String> convertOutputsToMinterms(boolean[][] validInputRows) {
-
-		if (validInputRows == null || validInputRows.length < 1)
-			throw new RuntimeException("ERROR when generating minterm-list from inputs");
-
-		List<String> minterms = new ArrayList<String>();
-
-		for (int i = 0; i < validInputRows.length; i++) {
-
-			StringBuilder builder = new StringBuilder();
-
-			for (int j = 0; j < validInputRows[i].length; j++)
-				builder.append(((validInputRows[i][j]) ? "1" : "0"));
-			minterms.add(builder.toString());
-
-		}
-		return minterms;
-
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.hqnnqh.turthtable.generator.main;
 
-import com.hqnnqh.turthtable.generator.FastTruthTableGenerator;
+import java.util.Arrays;
+
 import com.hqnnqh.turthtable.generator.TruthTableGenerator;
 import com.hqnnqh.turthtable.generator.simplifier.MinTermConverter;
 import com.hqnnqh.turthtable.generator.simplifier.Simplifier;
@@ -19,15 +20,18 @@ public class Main {
 //		(a->b)->((!a->b)->b)
 //		TruthTableGenerator generator = new TruthTableGenerator(formular);
 //		generator.generateTable();
-		String formular = "A > B = !B & A";
-		FastTruthTableGenerator generator = new FastTruthTableGenerator(formular);
+		String formular = "A & B | C > A | D & !D";
+		TruthTableGenerator generator = new TruthTableGenerator(formular);
 
 		generator.generateTable();
 
 		Simplifier simplifier = new Simplifier(MinTermConverter.getVariables(formular),
 				MinTermConverter.convertToStringList(formular));
 		String minimizedFormular = simplifier.minimize();
-		FastTruthTableGenerator generatorMinimized = new FastTruthTableGenerator(minimizedFormular);
+		TruthTableGenerator generatorMinimized = new TruthTableGenerator(minimizedFormular);
 		generatorMinimized.generateTable(MinTermConverter.getVariables(formular));
+
+		System.out.println("initial and minimized outputs are equal: "
+				+ Arrays.equals(generator.getOutputs(), generatorMinimized.getOutputs()));
 	}
 }

@@ -4,23 +4,25 @@ import java.util.Stack;
 
 public class Parser {
 
+	/**
+	 * 
+	 * @author Hannah Fluch Faster version of the parser with character operators
+	 * 
+	 */
+
 	// TODO: check for right precedence
-	private int precedenceOrder(String operator) {
-		if (operator.equals("!"))
-			return 8;
-		if (operator.equals("&&"))
-			return 7;
-		if (operator.equals("||"))
+	private int precedenceOrder(char operator) {
+		if (operator == '!')
 			return 6;
-		if (operator.equals("->"))
+		if (operator == '&')
 			return 5;
-		if (operator.equals("=="))
+		if (operator == '|')
 			return 4;
-		if (operator.equals("!="))
+		if (operator == '>')
 			return 3;
-		if (operator.equals("&"))
+		if (operator == '=')
 			return 2;
-		if (operator.equals("|"))
+		if (operator == '-')
 			return 1;
 		return 0;
 	}
@@ -34,25 +36,21 @@ public class Parser {
 	 * @param operator - logical operator to determine operation
 	 * @return the result of the operation
 	 */
-	private boolean performOperation(boolean value1, boolean value2, String operator) {
+	private boolean performOperation(boolean value1, boolean value2, char operator) {
 //		System.out.println("v1: " + value1 + " v2: " + value2 + " op: " + operator);
 		// value1 the right part of the operation and value2 the left part
 		switch (operator) {
-		case "!":
+		case '!':
 			return !value1; // in this case value2 is just false
-		case "&":
-			return value1 & value2;
-		case "|":
-			return value1 | value2; // &
-		case "&&":
-			return value1 && value2; // |
-		case "||":
-			return value1 || value2; // =
-		case "==":
-			return value1 == value2; // -
-		case "!=":
-			return value1 != value2; // >
-		case "->":
+		case '&':
+			return value1 && value2; // &
+		case '|':
+			return value1 || value2; // |
+		case '=':
+			return value1 == value2; // =
+		case '-':
+			return value1 != value2; // -
+		case '>':
 			return !value2 || value1; // DeMorgan Deviation
 		}
 
@@ -74,7 +72,7 @@ public class Parser {
 		boolean expectValue = true; // checks for the appropriate syntax
 
 		Stack<Boolean> values = new Stack<>(); // all values (true:1/false:0)
-		Stack<String> operators = new Stack<>(); // all operators (&&, ||, ==, ...)
+		Stack<Character> operators = new Stack<>(); // all operators (&&, ||, ==, ...)
 
 		for (int i = 0; i < expression.length(); i++) {
 
@@ -87,7 +85,7 @@ public class Parser {
 				if (!expectValue)
 					throw new ParserException("ERROR when parsing! Boolean-Operator expected!");
 
-				operators.push(String.valueOf(current));
+				operators.push(current);
 				expectValue = true;
 			}
 
@@ -108,11 +106,11 @@ public class Parser {
 				// calculate the parentheses one operation at a time and then push the result
 				// back into the stack
 
-				if (!operators.contains("("))
+				if (!operators.contains('('))
 					throw new ParserException("ERROR when parsing! Unexpected ')'!");
 
-				while (!operators.isEmpty() && !operators.peek().equals("(")) {
-					String operator = operators.peek(); // get current top operator of stack and pop it
+				while (!operators.isEmpty() && operators.peek() != '(') {
+					char operator = operators.peek(); // get current top operator of stack and pop it
 					operators.pop();
 
 					boolean value1 = values.peek(); // get current top value of stack and pop it
@@ -120,8 +118,8 @@ public class Parser {
 
 					boolean value2 = false;
 
-					if (!operator.equals("!")) { // if the operator is an !, then we just need one value and the other
-													// can be
+					if (operator != '!') { // if the operator is an !, then we just need one value and the other
+											// can be
 						// false
 						value2 = values.peek(); // get current top value of stack and pop it
 						values.pop();
@@ -140,56 +138,14 @@ public class Parser {
 				if (expectValue && current != '!')
 					throw new ParserException("ERROR when parsing! Value expected !");
 
-				String currentOperator = "";
-
 				if (i == expression.length() - 1)
 					throw new ParserException("ERROR when parsing! Value was expected!");
 
-				if (current == '!') {
-					if (expression.charAt(i + 1) == '=') {
-
-						if (expectValue)
-							throw new ParserException("ERROR when parsing! Value expected !");
-
-						currentOperator = "!=";
-						i++;
-					} else {
-						if (!expectValue)
-							throw new ParserException("ERROR when parsing! Connection-Operator expected !");
-						currentOperator = "!";
-					}
-				} else if (current == '=') {
-					if (expression.charAt(i + 1) == '=') {
-						currentOperator = "==";
-						i++;
-					} else
-						throw new ParserException("ERROR when parsing! Unknown operator: " + current);
-				} else if (current == '&') {
-					if (expression.charAt(i + 1) == '&') {
-						currentOperator = "&&";
-						i++;
-					} else
-						currentOperator = "&";
-				} else if (current == '|') {
-					if (expression.charAt(i + 1) == '|') {
-						currentOperator = "||";
-						i++;
-					} else
-						currentOperator = "|";
-				} else if (current == '-') {
-					if (expression.charAt(i + 1) == '>') {
-						currentOperator = "->";
-						i++;
-					} else
-						throw new ParserException("ERROR when parsing! Unknown operator: " + current);
-
-				} else
-					throw new ParserException("ERROR when parsing! Unknown operator: " + current);
 				// calculate the operations with higher precedence before adding another
 				// operator
-				while (!operators.isEmpty() && precedenceOrder(operators.peek()) >= precedenceOrder(currentOperator)) {
+				while (!operators.isEmpty() && precedenceOrder(operators.peek()) >= precedenceOrder(current)) {
 
-					String operator = operators.peek(); // get current top operator of stack and pop it
+					char operator = operators.peek(); // get current top operator of stack and pop it
 					operators.pop();
 
 					boolean value1 = values.peek(); // get current top value of stack and pop it
@@ -197,9 +153,9 @@ public class Parser {
 
 					boolean value2 = false;
 
-					if (!operator.equals("!")) { // if the operator is an !, then we just need one value and the
-													// other
-													// can be
+					if (operator != '!') { // if the operator is an !, then we just need one value and the
+											// other
+											// can be
 						value2 = values.peek(); // get current top value of stack and pop it
 						values.pop();
 					}
@@ -208,14 +164,16 @@ public class Parser {
 
 				}
 
-				operators.push(currentOperator);
+				operators.push(current);
 				expectValue = true;
 
 			}
 		}
 		// do the rest of the operations
-		while (!operators.isEmpty()) {
-			String operator = operators.peek(); // get current top operator of stack and pop it
+		while (!operators.isEmpty())
+
+		{
+			char operator = operators.peek(); // get current top operator of stack and pop it
 			operators.pop();
 
 			boolean value1 = values.peek(); // get current top value of stack and pop it
@@ -223,7 +181,7 @@ public class Parser {
 
 			boolean value2 = false;
 
-			if (!operator.equals("!")) { // if the operator is an !, then we just need one value and the other can be
+			if (operator != '!') { // if the operator is an !, then we just need one value and the other can be
 				// false
 				value2 = values.peek(); // get current top value of stack and pop it
 				values.pop();

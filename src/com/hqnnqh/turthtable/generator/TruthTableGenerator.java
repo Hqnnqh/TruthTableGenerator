@@ -11,6 +11,8 @@ public class TruthTableGenerator {
 
 	private final Parser parser;
 
+	private boolean[] outputs;
+
 	public TruthTableGenerator(String expression) {
 
 		this.expression = expression;
@@ -18,50 +20,19 @@ public class TruthTableGenerator {
 				.toArray();
 		this.rows = (int) Math.pow(2, variables.length);
 		this.parser = new Parser();
+		this.outputs = new boolean[rows];
 
 	}
 
 	public void generateTable(char[] variables) {
-
 		this.variables = new int[variables.length];
 		for (int i = 0; i < variables.length; i++)
 			this.variables[i] = variables[i];
 
 		this.rows = (int) Math.pow(2, variables.length);
+		this.outputs = new boolean[rows];
 
 		generateTable();
-
-	}
-
-	public boolean[] getOutputs(int[] variables) {
-		this.variables = variables;
-		this.rows = (int) Math.pow(2, variables.length);
-
-		return getOutputs();
-
-	}
-
-	public boolean[] getOutputs() {
-		boolean[] states = new boolean[rows];
-
-		for (int i = 0; i < rows; i++) {
-
-			String currentExpression = expression;
-			String inputs = Integer.toBinaryString(i);
-			// add zeros at beginning
-			while (inputs.length() < variables.length)
-				inputs = "0" + inputs;
-
-			for (int j = 0; j < variables.length; j++) {
-				currentExpression = currentExpression.replaceAll(String.valueOf(((char) variables[j])),
-						String.valueOf(inputs.charAt(j)));
-			}
-
-			int result = (parser.evaluate(currentExpression) ? 1 : 0);
-
-			states[i] = result == 1;
-		}
-		return states;
 
 	}
 
@@ -83,10 +54,14 @@ public class TruthTableGenerator {
 				System.out.print(inputs.charAt(j) + "|\t");
 			}
 
-			int result = (parser.evaluate(currentExpression) ? 1 : 0);
+			int result = ((outputs[i] = parser.evaluate(currentExpression)) ? 1 : 0);
 			System.out.println(result + "\t|");
 		}
 		System.out.println();
+	}
+
+	public boolean[] getOutputs() {
+		return this.outputs;
 	}
 
 }
