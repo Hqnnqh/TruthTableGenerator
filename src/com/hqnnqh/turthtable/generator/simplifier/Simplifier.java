@@ -70,7 +70,6 @@ public class Simplifier {
 					value.append("&");
 				}
 			}
-
 			if (i < essentialPrimeImplicants.size() - 1) {
 				value.append("|");
 			}
