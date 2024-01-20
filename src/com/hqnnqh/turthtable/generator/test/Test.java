@@ -97,7 +97,7 @@ class Test {
 	}
 
 	private String simplify(String formular) {
-		return new Simplifier(MinTermConverter.getVariables(formular), MinTermConverter.convertToStringList(formular))
+		return new Simplifier(MinTermConverter.getVariables(formular), MinTermConverter.fromFormular(formular))
 				.minimize();
 	}
 

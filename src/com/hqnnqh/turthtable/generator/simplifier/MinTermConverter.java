@@ -17,10 +17,9 @@ public class MinTermConverter {
 			variables[i] = (char) variablesAsInts[i];
 		return variables;
 	}
-	
 
-	public static List<String> convertToStringList(String formular) {
-		List<String> minTerms = new ArrayList<>();
+	public static List<String> fromFormular(String formular) {
+		List<String> minterms = new ArrayList<>();
 
 		Parser parser = new Parser();
 		int[] variables = formular.chars().filter(character -> Character.isLetter(((char) character))).distinct()
@@ -50,12 +49,33 @@ public class MinTermConverter {
 					currExpression = currExpression + ((statesOfRow[j] == true) ? '1' : '0');
 
 				}
-				minTerms.add(currExpression);
+				minterms.add(currExpression);
 			}
 		}
-		return minTerms;
+		return minterms;
 	}
-	
-	
+
+	public static List<String> fromOutputs(boolean[] outputs) {
+		if (!((outputs.length & (outputs.length - 1)) == 0 && outputs.length != 0) || outputs.length == 1) {
+			throw new RuntimeException("Invalid number of outputs! Required to be a power of 2 and bigger than 1!");
+		}
+		List<String> minterms = new ArrayList<>();
+
+		int numberOfVariables = (int) (Math.log(outputs.length) / Math.log(2));
+		int numberOfRows = (int) Math.pow(2, numberOfVariables);
+
+		for (int i = 0; i < numberOfRows; i++) {
+			if (outputs[i] == true) {
+				String inputs = Integer.toBinaryString(i);
+				// add zeros at beginning
+				while (inputs.length() < numberOfVariables)
+					inputs = "0" + inputs;
+
+				minterms.add(inputs);
+			}
+		}
+		return minterms;
+
+	}
 
 }

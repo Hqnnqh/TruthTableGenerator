@@ -19,16 +19,17 @@ import com.hqnnqh.turthtable.generator.simplifier.Simplifier;
 
 public class Main {
 	public static void main(String[] args) {
-		long startingTime = System.currentTimeMillis();
-		String formular = "1 & 0";
-		TruthTableGenerator generator = new TruthTableGenerator(formular);
 
+		long startingTime = System.currentTimeMillis();
+
+		String formular = "a | !a";
+		TruthTableGenerator generator = new TruthTableGenerator(formular);
 		generator.generateTable();
 
 		Simplifier simplifier = new Simplifier(MinTermConverter.getVariables(formular),
-				MinTermConverter.convertToStringList(formular));
+				MinTermConverter.fromFormular(formular));
 		List<String> solutions = simplifier.getMinimizedSolutions();
-		
+
 		System.out.println("Shortest possible solutions: " + solutions);
 
 		String minimizedFormular = solutions.get(0);
