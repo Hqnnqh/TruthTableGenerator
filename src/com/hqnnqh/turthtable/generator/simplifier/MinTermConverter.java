@@ -17,6 +17,7 @@ public class MinTermConverter {
 			variables[i] = (char) variablesAsInts[i];
 		return variables;
 	}
+	
 
 	public static List<String> convertToStringList(String formular) {
 		List<String> minTerms = new ArrayList<>();
@@ -54,5 +55,7 @@ public class MinTermConverter {
 		}
 		return minTerms;
 	}
+	
+	
 
 }

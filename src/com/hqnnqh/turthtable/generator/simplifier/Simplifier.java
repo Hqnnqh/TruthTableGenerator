@@ -2,9 +2,7 @@ package com.hqnnqh.turthtable.generator.simplifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Simplifier {
 
@@ -36,13 +34,15 @@ public class Simplifier {
 	 * 
 	 * Minimize given expression.
 	 * 
-	 * @return the simplified expression
+	 * @return one of the solutions for the simplified expression
 	 */
 	public String minimize() {
+
 		List<String> newMinterms = minterms;
 		List<String> prevMinterms;
 
 		// reduce the expression as long as it changes the minterms
+
 		do {
 			prevMinterms = newMinterms;
 			newMinterms = reduce(newMinterms);
@@ -50,8 +50,9 @@ public class Simplifier {
 		} while (!listsEqual(prevMinterms, newMinterms));
 
 		List<String> primeImplicants = newMinterms;
+		Optimizer optimizer = new Optimizer(primeImplicants, minterms);
 
-		List<String> essentialPrimeImplicants = findEssentialPrimeImplicants(primeImplicants, minterms);
+		List<String> essentialPrimeImplicants = new ArrayList<>(optimizer.solve());
 
 		StringBuilder value = new StringBuilder();
 
@@ -74,9 +75,10 @@ public class Simplifier {
 				value.append("|");
 			}
 		}
-
 		return value.toString();
 	}
+	
+	
 
 	/**
 	 * Pad a binary representation with zeros so that is has the right length
@@ -159,9 +161,9 @@ public class Simplifier {
 		// alternative: first sort and then only compare minterm(n) with minterm(n+1)
 
 		List<String> newMinterms = new ArrayList<>();
-
 		int max = minterms.size(); // maximum number of minterms
 		int[] matched = new int[max]; // minterms that have been matched
+
 		for (int i = 0; i < max - 1; i++) { // last one does not have to be compared
 
 			// compare each minterm with the ones following
@@ -239,85 +241,6 @@ public class Simplifier {
 			}
 		}
 		return temp;
-
-	}
-
-//	Petricks Method:
-
-	/**
-	 * Using Petrick's Method to reduce the prime implicants down to essential ones
-	 * 
-	 * @param primeImplicants - all the prime implicants
-	 * @param minterms        - all covered minterms
-	 * @return the essential prime implicants
-	 */
-	private List<String> findEssentialPrimeImplicants(List<String> primeImplicants, List<String> minterms) {
-		Set<String> coveredMinterms = new HashSet<>();
-		List<String> minimalCover = new ArrayList<>();
-
-		while (!minterms.isEmpty()) {
-//			String bestImplicant = primeImplicants.stream().max(
-//					(a, b) -> Integer.compare(countCoveredMinterms(a, minterms), countCoveredMinterms(b, minterms)))
-//				.orElse(null); // covers maximum number of minterms
-//			
-			String bestImplicant = null; // the implicant that covers the max amount of prime implicants
-			int maxCoveredMinterms = 0; // TODO: check if setting it to 1 is better
-			for (String implicant : primeImplicants) {
-				int countCovered = countCoveredMinterms(implicant, minterms);
-				if (countCovered > maxCoveredMinterms) {
-					maxCoveredMinterms = countCovered;
-					bestImplicant = implicant;
-				}
-			}
-			if (bestImplicant != null) {
-
-				String currBestImplicant = bestImplicant;
-				minimalCover.add(currBestImplicant);
-				primeImplicants.remove(currBestImplicant);
-				coveredMinterms.addAll(
-						minterms.stream().filter(minterm -> coversMinterm(currBestImplicant, minterm)).toList());
-				minterms.removeAll(coveredMinterms); // remove the covered minterms for the leftover list of covered
-														// minterms
-			} else {
-				break; // No more prime implicants can be added
-			}
-		}
-
-		return minimalCover;
-	}
-
-	/**
-	 * Return amount of covered minterms for the given implicant
-	 * 
-	 * @param implicant - given prime implicant
-	 * @param minterms  - given minterms
-	 * @return amount of covered minterms
-	 */
-	private int countCoveredMinterms(String implicant, List<String> minterms) {
-		return (int) minterms.stream().filter(minterm -> coversMinterm(implicant, minterm)).count();
-	}
-
-	/**
-	 * 
-	 * Return whether the current implicant covers the given minterm
-	 * 
-	 * Example 1: implicant="--01", minterm="1010" -> returns false Example 2:
-	 * implicant="1--0", minterm="1010" -> returns true
-	 * 
-	 * @param implicant - given prime implicant
-	 * @param minterm   - given minterm
-	 * @return if the implicant covers the minterm
-	 */
-	private boolean coversMinterm(String implicant, String minterm) {
-//		return IntStream.range(0, implicant.length())
-//				.allMatch(i -> implicant.charAt(i) == '-' || implicant.charAt(i) == minterm.charAt(i));
-
-		for (int i = 0; i < implicant.length(); i++) {
-			if (implicant.charAt(i) != '-' && implicant.charAt(i) != minterm.charAt(i))
-				return false;
-		}
-
-		return true;
 
 	}
 
