@@ -71,9 +71,11 @@ public class Simplifier {
 
 			StringBuilder value = new StringBuilder();
 
-			if (essentialPrimeImplicants.isEmpty())
+			if (essentialPrimeImplicants.isEmpty()) {
 				shortestSolutions.add("0");
-
+				break;
+			}
+				
 			for (int i = 0; i < essentialPrimeImplicants.size(); i++) {
 				String implicant = getValue(essentialPrimeImplicants.get(i));
 				for (int j = 0; j < implicant.length(); j++) {

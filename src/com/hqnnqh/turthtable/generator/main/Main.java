@@ -22,7 +22,7 @@ public class Main {
 
 		long startingTime = System.currentTimeMillis();
 
-		String formular = "a | !a";
+		String formular = "a & !a";
 		TruthTableGenerator generator = new TruthTableGenerator(formular);
 		generator.generateTable();
 
