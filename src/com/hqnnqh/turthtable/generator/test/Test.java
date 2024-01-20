@@ -4,14 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.hqnnqh.turthtable.generator.simplifier.MinTermConverter;
 import com.hqnnqh.turthtable.generator.simplifier.Simplifier;
-
+/**
+ * 
+ * @author Hannah Fluch github: Hqnnqh
+ *
+ */
 class Test {
 
 	/**
-	 * Sources https://en.wikipedia.org/wiki/Quine–McCluskey_algorithm
-	 * https://en.wikipedia.org/wiki/Petrick%27s_method
-	 * https://krex.k-state.edu/bitstream/handle/2097/22765/LD2668R41966L334.pdf;jsessionid=1B1E0AD378A9280693DDC7F7A8BB6B25?sequence=1
-	 * 
+	 * Sources:
+	 *  https://en.wikipedia.org/wiki/Quine–McCluskey_algorithm
+	 *  https://en.wikipedia.org/wiki/Petrick%27s_method
+	 *  https://krex.k-state.edu/bitstream/handle/2097/22765/LD2668R41966L334.pdf;jsessionid=1B1E0AD378A9280693DDC7F7A8BB6B25?sequence=1
+	 *  https://ocw.nthu.edu.tw/ocw/upload/230/news/資工系王俊堯教授數位邏輯設計Unit%206_Quine-McClusky%20Method.pdf
+	 *  POS Logic Source year 2
 	 */
 
 	// Tests for base junctions
@@ -83,7 +89,12 @@ class Test {
 		assertEquals("!B&!C|C&D", simplify(
 				"!A&!B&!C&!D | !A&!B&!C&D | !A&!B&C&D | !A&B&C&D | A&!B&!C&!D | A&!B&!C&D |A&!B&C&D | A&B&C&D"));
 	}
-	
+
+	@org.junit.jupiter.api.Test
+	public void testExpression12() {
+		assertEquals("!A&!C|A&B|!B&C", simplify("!A&!B&!C | !A&!B&C | !A&B&!C | A&!B&C|A&B&!C| A&B&C"));
+
+	}
 
 	private String simplify(String formular) {
 		return new Simplifier(MinTermConverter.getVariables(formular), MinTermConverter.convertToStringList(formular))

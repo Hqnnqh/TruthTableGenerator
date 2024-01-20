@@ -3,6 +3,7 @@ package com.hqnnqh.turthtable.generator.simplifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class Simplifier {
 
@@ -38,6 +39,17 @@ public class Simplifier {
 	 */
 	public String minimize() {
 
+		return getMinimizedSolutions().get(0);
+	}
+
+	/**
+	 * 
+	 * Minimize given expression down to all possible shortest solutions
+	 * 
+	 * @return all shortest solutions for a given expression
+	 */
+	public List<String> getMinimizedSolutions() {
+
 		List<String> newMinterms = minterms;
 		List<String> prevMinterms;
 
@@ -52,33 +64,36 @@ public class Simplifier {
 		List<String> primeImplicants = newMinterms;
 		Optimizer optimizer = new Optimizer(primeImplicants, minterms);
 
-		List<String> essentialPrimeImplicants = new ArrayList<>(optimizer.solve());
+		List<Set<String>> essentialPrimeImplicantsVariants = optimizer.solveToShortest();
+		List<String> shortestSolutions = new ArrayList<>();
+		for (Set<String> variant : essentialPrimeImplicantsVariants) {
+			List<String> essentialPrimeImplicants = new ArrayList<>(variant);
 
-		StringBuilder value = new StringBuilder();
+			StringBuilder value = new StringBuilder();
 
-		if (essentialPrimeImplicants.isEmpty())
-			return "0";
+			if (essentialPrimeImplicants.isEmpty())
+				shortestSolutions.add("0");
 
-		for (int i = 0; i < essentialPrimeImplicants.size(); i++) {
-			String implicant = getValue(essentialPrimeImplicants.get(i));
-			for (int j = 0; j < implicant.length(); j++) {
-				char currentChar = implicant.charAt(j);
-				value.append(currentChar);
+			for (int i = 0; i < essentialPrimeImplicants.size(); i++) {
+				String implicant = getValue(essentialPrimeImplicants.get(i));
+				for (int j = 0; j < implicant.length(); j++) {
+					char currentChar = implicant.charAt(j);
+					value.append(currentChar);
 
-				if (j < implicant.length() - 1 && currentChar != '!') {
-					// Add "&" only if the current character is not "!" and it's not the last
-					// character in the implicant
-					value.append("&");
+					if (j < implicant.length() - 1 && currentChar != '!') {
+						// Add "&" only if the current character is not "!" and it's not the last
+						// character in the implicant
+						value.append("&");
+					}
+				}
+				if (i < essentialPrimeImplicants.size() - 1) {
+					value.append("|");
 				}
 			}
-			if (i < essentialPrimeImplicants.size() - 1) {
-				value.append("|");
-			}
+			shortestSolutions.add(value.toString());
 		}
-		return value.toString();
+		return shortestSolutions;
 	}
-	
-	
 
 	/**
 	 * Pad a binary representation with zeros so that is has the right length
