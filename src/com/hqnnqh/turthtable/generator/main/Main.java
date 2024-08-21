@@ -8,11 +8,11 @@ import com.hqnnqh.turthtable.generator.simplifier.MinTermConverter;
 import com.hqnnqh.turthtable.generator.simplifier.Simplifier;
 
 /**
- * 
- * 
+ *
+ *
  * Java Implementation of Logical Stack Calculations, Quine-McKluskey Algorithm
  * and Petrick's Method
- * 
+ *
  * @author Hannah Fluch git: Hqnnqh
  *
  */
@@ -22,7 +22,7 @@ public class Main {
 
 		long startingTime = System.currentTimeMillis();
 
-		String formular = "a & !a";
+		String formular = "a & !a";
 		TruthTableGenerator generator = new TruthTableGenerator(formular);
 		generator.generateTable();
 

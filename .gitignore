@@ -1,1 +1,4 @@
 inputs.txt
+bin
+.settings
+.idea
